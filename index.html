@@ -32,20 +32,10 @@
 
     <h1>Pikaday</h1>
 
-    <p class="large">A refreshing JavaScript Datepicker — lightweight, no dependencies, modular CSS.</p>
-
-    <p><a href="https://github.com/dbushell/Pikaday"><strong>Pikaday source on GitHub</strong></a></p>
-
     <label for="datepicker">Date:</label>
     <br>
     <input type="text" id="datepicker">
-
-    <h2>What is this?</h2>
-
-    <p>This is a development preview! Feel free to use it however you like but please report any bugs or feature requests to <a href="http://twitter.com/dbushell/">@dbushell</a> (on the GitHub issue tracker), thanks!</p>
-
-    <p class="small">Copyright © 2012 <a href="http://dbushell.com/">David Bushell</a> | BSD &amp; MIT license | Made for <a href="http://www.browserlondon.com/">Browser</a></p>
-
+    <input type="text" id="datepicker1">
 
     <script src="pikaday.js"></script>
     <script>
@@ -58,6 +48,16 @@
         maxDate: new Date('2020-12-31'),
         yearRange: [2000,2020]
     });
+    
+    var picker = new Pikaday(
+    {
+        field: document.getElementById('datepicker1'),
+        firstDay: 1,
+        minDate: new Date('2000-01-01'),
+        maxDate: new Date('2020-12-31'),
+        yearRange: [2000,2020]
+    });
+
 
     </script>
 </body>

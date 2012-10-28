@@ -141,8 +141,8 @@
         yearRange: 10,
 
         // used internally (don't config outside)
-        minYear: 0,
-        maxYear: 9999,
+        minYear: 1990,
+        maxYear: 2099,
         minMonth: undefined,
         maxMonth: undefined,
 
@@ -152,12 +152,20 @@
         numberOfMonths: 1,
 
         // internationalization
-        i18n: {
+        /* i18n: {
 
                 months        : ['January','February','March','April','May','June','July','August','September','October','November','December'],
                 //monthsShort   : ['Jan_Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
                 weekdays      : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
                 weekdaysShort : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+        }, */
+        
+        i18n: {
+
+                months        : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+                monthsShort   : ['1','2','3','4','5','6','7','8','9','10','11','12'],
+                weekdays      : ['星期天', '星期一','星期二','星期三','星期四','星期五','星期六'],
+                weekdaysShort : ['日','一','二','三','四','五','六']
         },
 
         // callback function
@@ -194,7 +202,7 @@
         if (isSelected) {
             arr.push('is-selected');
         }
-        return '<td data-day="' + i + '" class="' + arr.join(' ') + '"><button class="pika-button" type="button">' + i + '</button>' + '</td>';
+        return '<td data-day="' + i + '" class="' + arr.join(' ') + '"><a class="pika-button" href="javascript:void(0);">' + i + '</a>' + '</td>';
     },
 
     renderRow = function(days, isRTL)
@@ -226,15 +234,13 @@
             isMaxYear = year === opts.maxYear,
             html = '<div class="pika-title">',
             prev = true,
-            next = true;
-
-        for (arr = [], i = 0; i < 12; i++) {
-            arr.push('<option value="' + i + '"' +
-                (i === month ? ' selected': '') +
-                ((isMinYear && i < opts.minMonth) || (isMaxYear && i > opts.maxMonth) ? 'disabled' : '') + '>' +
-                opts.i18n.months[i] + '</option>');
+            next = true,
+            months = opts.i18n.monthsShort ? opts.i18n.monthsShort : opts.i18n.months;
+        
+        if (isMinYear && (month === 0 || opts.minMonth >= month)) {
+            prev = false;
         }
-        html += '<div class="pika-label">' + opts.i18n.months[month] + '<select class="pika-select pika-select-month">' + arr.join('') + '</select></div>';
+        html += '<a class="pika-prev' + (prev ? '' : ' is-disabled') + '" href="javascript:void(0);">&lt;</a>';
 
         if (isArray(opts.yearRange)) {
             i = opts.yearRange[0];
@@ -249,18 +255,20 @@
                 arr.push('<option value="' + i + '"' + (i === year ? ' selected': '') + '>' + (i) + '</option>');
             }
         }
-        html += '<div class="pika-label">' + year + '<select class="pika-select pika-select-year">' + arr.join('') + '</select></div>';
-
-        if (isMinYear && (month === 0 || opts.minMonth >= month)) {
-            prev = false;
+        html += '<div class="pika-label pika-label-year">' + year + '年 <select class="pika-select pika-select-year">' + arr.join('') + '</select></div>';
+        
+        for (arr = [], i = 0; i < 12; i++) {
+            arr.push('<option value="' + i + '"' +
+                (i === month ? ' selected': '') +
+                ((isMinYear && i < opts.minMonth) || (isMaxYear && i > opts.maxMonth) ? 'disabled' : '') + '>' +
+                months[i] + '</option>');
         }
+        html += '<div class="pika-label pika-label-month">' + months[month] + '月<select class="pika-select pika-select-month">' + arr.join('') + '</select></div>';
 
         if (isMaxYear && (month === 11 || opts.maxMonth <= month)) {
             next = false;
         }
-
-        html += '<button class="pika-prev' + (prev ? '' : ' is-disabled') + '" type="button">Previous Month</button>';
-        html += '<button class="pika-next' + (next ? '' : ' is-disabled') + '" type="button">Next Month</button>';
+        html += '<a class="pika-next' + (next ? '' : ' is-disabled') + '" href="javascript:void(0);">&gt;</a>';
 
         return html += '</div>';
     },
@@ -504,7 +512,13 @@
          */
         toString: function(format)
         {
-            return !isDate(this._d) ? '' : hasMoment ? window.moment(this._d).format(format || this._o.format) : this._d.toDateString();
+            if(!isDate(this._d)) return '';
+            var y = this._d.getFullYear();
+            var m = this._d.getMonth() + 1;
+            var d = this._d.getDate();
+            m = m < 10 ? '0' + m : m;
+            d = d < 10 ? '0' + d : d;
+            return hasMoment ? window.moment(this._d).format(format || this._o.format) : (y + '-' + m + '-' + d);
         },
 
         /**
